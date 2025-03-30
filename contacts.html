@@ -28,7 +28,8 @@
                         pattern="[A-Za-zА-Яа-яЁё]+" />
                     <input name="Vacancy" id="edit_vacancy" class="edit_input" type="text" required minlength="3"
                         pattern="[A-Za-zА-Яа-яЁё]+" />
-                    <input name="Phone" id="edit_phone" class="edit_input" type="text" required minlength="5" pattern="^\+\d{11}$" />
+                    <input name="Phone" id="edit_phone" class="edit_input" type="text" required minlength="5"
+                        pattern="^\+\d{11}$" />
 
                 </div>
                 <button class="edit_button" type="button">Edit</button>
@@ -44,7 +45,7 @@
                     Search contact
                 </h1>
                 <div>
-                    <input  class="search_input" type="text" placeholder="Search..." required />
+                    <input class="search_input" type="text" placeholder="Search..." required />
                 </div>
                 <div class="info_block"></div>
                 <button class="show_all" type="button">Show all</button>
@@ -59,13 +60,12 @@
         <form id="inputs" novalidate data-js-form>
             <div class="inputs_fields">
                 <input type="text" id="name" name="Name" placeholder="Name" required minlength="3"
-                    pattern="[A-Za-zА-Яа-яЁё]+" title="Can't be shorter then 3 symbols" value="asdad">
+                    pattern="[A-Za-zА-Яа-яЁё]+" title="Can't be shorter then 3 symbols">
                 <input type="text" id="vacancy" name="Vacancy" placeholder="Vacancy" required minlength="3"
-                    pattern="[A-Za-zА-Яа-яЁё]+" title="Can't be shorter then 3 symbols" value="asdad">
+                    pattern="[A-Za-zА-Яа-яЁё]+" title="Can't be shorter then 3 symbols">
                 <input type="text" id="phone" name="Phone" placeholder="Phone +X XXX XXX XX XX" required minlength="5"
                     pattern="^\+\d{11}$"
-                    title="Can't be shorter then 5 symbols and the recording format must match +X XXX XXX XX XX"
-                    value="+79999999999">
+                    title="Can't be shorter then 5 symbols and the recording format must match +X XXX XXX XX XX">
                 <button class="button_add" type="button">ADD</button>
                 <button class="button_clear" type="button">Clear List</button>
                 <button id="show-dialog" class="button_search" type="button">Search</button>
