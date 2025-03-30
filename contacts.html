@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact list</title>
+    <meta name="author" content="Дарья Красавина">
+    <link rel="icon" type="image/x-icon" href="images/memi-klev-club-j486-p-memi-malenkii-kotenok-15.png">
+    <link href="/styles/contacts.css" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Sixtyfour+Convergence&display=swap"
+        rel="stylesheet">
+
+
+</head>
+
+<body>
+    <dialog id="edit">
+        <form id="edit_form" method="dialog">
+            <button id="edit-close" class="edit_button_close" type="button"></button>
+            <div class="dialog_wo_cross">
+                <h1 class="edit_h1">
+                    Edit
+                </h1>
+                <div class="edit_inputs">
+                    <input name="Name" id="edit_name" class="edit_input" type="text" required minlength="3"
+                        pattern="[A-Za-zА-Яа-яЁё]+" />
+                    <input name="Vacancy" id="edit_vacancy" class="edit_input" type="text" required minlength="3"
+                        pattern="[A-Za-zА-Яа-яЁё]+" />
+                    <input name="Phone" id="edit_phone" class="edit_input" type="text" required minlength="5" pattern="^\+\d{11}$" />
+
+                </div>
+                <button class="edit_button" type="button">Edit</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="dialog" class="search_dialog">
+        <form method="dialog">
+            <button id="js-close" class="button_close" type="button"></button>
+            <div class="dialog_wo_cross">
+                <h1 class="search_contact">
+                    Search contact
+                </h1>
+                <div>
+                    <input  class="search_input" type="text" placeholder="Search..." required />
+                </div>
+                <div class="info_block"></div>
+                <button class="show_all" type="button">Show all</button>
+            </div>
+        </form>
+    </dialog>
+    <header>
+        <h1>Contact List on JS</h1>
+        <a href="https://github.com/dkrasavina" class="info-github">GitHub Repository link</a>
+    </header>
+    <main>
+        <form id="inputs" novalidate data-js-form>
+            <div class="inputs_fields">
+                <input type="text" id="name" name="Name" placeholder="Name" required minlength="3"
+                    pattern="[A-Za-zА-Яа-яЁё]+" title="Can't be shorter then 3 symbols" value="asdad">
+                <input type="text" id="vacancy" name="Vacancy" placeholder="Vacancy" required minlength="3"
+                    pattern="[A-Za-zА-Яа-яЁё]+" title="Can't be shorter then 3 symbols" value="asdad">
+                <input type="text" id="phone" name="Phone" placeholder="Phone +X XXX XXX XX XX" required minlength="5"
+                    pattern="^\+\d{11}$"
+                    title="Can't be shorter then 5 symbols and the recording format must match +X XXX XXX XX XX"
+                    value="+79999999999">
+                <button class="button_add" type="button">ADD</button>
+                <button class="button_clear" type="button">Clear List</button>
+                <button id="show-dialog" class="button_search" type="button">Search</button>
+            </div>
+            <div class="error" data-js-form-error>ERROR</div>
+
+        </form>
+
+        <div class="table">
+
+        </div>
+        <div class="contacts" data-js-list>
+            <div class="columns">
+                <div id="wrapped_A" class="contact_letter">
+                    <div class="wrapped_contact_letter">
+                        <div id="A" class="letter">A</div>
+                    </div>
+                </div>
+
+                <div id="wrapped_B" class="contact_letter">
+                    <div class="wrapped_contact_letter">
+                        <div id="B" class="letter">B</div>
+                    </div>
+                </div>
+
+                <div id="wrapped_C" class="contact_letter">
+                    <div class="wrapped_contact_letter">
+                        <div id="C" class="letter">C</div>
+                    </div>
+                </div>
+
+                <div id="wrapped_D" class="contact_letter">
+                    <div class="wrapped_contact_letter">
+                        <div id="D" class="letter">D</div>
+                    </div>
+                </div>
+
+                <div id="wrapped_E" class="contact_letter">
+                    <div class="wrapped_contact_letter">
+                        <div id="E" class="letter">E</div>
+                    </div>
+
+                </div>
+                <div id="wrapped_F" class="contact_letter">
+                    <div class="wrapped_contact_letter">
+                        <div id="F" class="letter">F</div>
+                    </div>
+
+                </div>
+                <div id="wrapped_G" class="contact_letter">
+                    <div class="wrapped_contact_letter">
+                        <div id="G" class="letter">G</div>
+                    </div>
+
+                </div>
+                <div id="wrapped_H" class="contact_letter">
+                    <div class="wrapped_contact_letter">
+                        <div id="H" class="letter">H</div>
+                    </div>
+
+                </div>
+                <div id="wrapped_I" class="contact_letter">
+                    <div class="wrapped_contact_letter">
+                        <div id="I" class="letter">I</div>
+                    </div>
+
+                </div>
+                <div id="wrapped_J" class="contact_letter">
+                    <div class="wrapped_contact_letter">
+                        <div id="J" class="letter">J</div>
+                    </div>
+
+                </div>
+                <div id="wrapped_K" class="contact_letter">
+                    <div class="wrapped_contact_letter">
+                        <div id="K" class="letter">K</div>
+                    </div>
+
+                </div>
+                <div id="wrapped_L" class="contact_letter">
+                    <div class="wrapped_contact_letter">
+                        <div id="L" class="letter">L</div>
+                    </div>
+
+                </div>
+                <div id="wrapped_M" class="contact_letter">
+                    <div class="wrapped_contact_letter">
+                        <div id="M" class="letter">M</div>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div class="columns">
+                <div id="wrapped_N" class="contact_letter">
+                    <div class="wrapped_contact_letter">
+                        <div id="N" class="letter">N</div>
+                    </div>
+
+                </div>
+                <div id="wrapped_O" class="contact_letter">
+                    <div class="wrapped_contact_letter">
+                        <div id="O" class="letter">O</div>
+                    </div>
+
+                </div>
+                <div id="wrapped_P" class="contact_letter">
+                    <div class="wrapped_contact_letter">
+                        <div id="P" class="letter">P</div>
+                    </div>
+
+                </div>
+                <div id="wrapped_Q" class="contact_letter">
+                    <div class="wrapped_contact_letter">
+                        <div id="Q" class="letter">Q</div>
+                    </div>
+
+                </div>
+                <div id="wrapped_R" class="contact_letter">
+                    <div class="wrapped_contact_letter">
+                        <div id="R" class="letter">R</div>
+                    </div>
+
+                </div>
+                <div id="wrapped_S" class="contact_letter">
+                    <div class="wrapped_contact_letter">
+                        <div id="S" class="letter">S</div>
+                    </div>
+
+                </div>
+                <div id="wrapped_T" class="contact_letter">
+                    <div class="wrapped_contact_letter">
+                        <div id="T" class="letter">T</div>
+                    </div>
+
+                </div>
+                <div id="wrapped_U" class="contact_letter">
+                    <div class="wrapped_contact_letter">
+                        <div id="U" class="letter">U</div>
+                    </div>
+
+                </div>
+                <div id="wrapped_V" class="contact_letter">
+                    <div class="wrapped_contact_letter">
+                        <div id="V" class="letter">V</div>
+                    </div>
+
+                </div>
+                <div id="wrapped_W" class="contact_letter">
+                    <div class="wrapped_contact_letter">
+                        <div id="W" class="letter">W</div>
+                    </div>
+
+                </div>
+                <div id="wrapped_X" class="contact_letter">
+                    <div class="wrapped_contact_letter">
+                        <div id="X" class="letter">X</div>
+                    </div>
+
+                </div>
+                <div id="wrapped_Y" class="contact_letter">
+                    <div class="wrapped_contact_letter">
+                        <div id="Y" class="letter">Y</div>
+                    </div>
+
+                </div>
+                <div id="wrapped_Z" class="contact_letter">
+                    <div class="wrapped_contact_letter">
+                        <div id="Z" class="letter">Z</div>
+                    </div>
+
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+        </div>
+
+    </main>
+    <script src="./script.js"></script>
+
+</body>
+
+</html>

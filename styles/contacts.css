@@ -1,0 +1,386 @@
+html {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-size: 20px;
+  font-family: "Open Sans", serif;
+  margin: 0;
+  padding: 0;
+  background-image: url(../images/memi-klev-club-vz5q-p-memi-malenkii-kot-9.jpg);
+  background-size: cover;
+}
+
+header {
+  text-align: center;
+}
+
+h1 {
+  color: rgb(255, 102, 0);
+  font-size: 50px;
+}
+
+.inputs_fields {
+  margin: 2rem 25rem 2rem 25rem;
+  display: flex;
+  justify-content: center;
+  justify-content: space-evenly;
+  align-items: baseline;
+}
+
+input {
+  border: 2px rgb(140, 107, 233) solid;
+  border-radius: 4px;
+  width: 13rem;
+  height: 2rem;
+  color: white;
+  background-color: rgb(48, 47, 47);
+}
+
+input:hover {
+  border-color: brown;
+}
+
+input:has(option[value~="0"]:checked) {
+  color: rgb(196, 196, 196);
+}
+
+button {
+  cursor: pointer;
+  border: 2px rgb(140, 107, 233) solid;
+  border-radius: 6px;
+  width: 7rem;
+  height: 2rem;
+}
+
+button:hover {
+  border-color: rgb(242, 3, 3);
+  background-color: black;
+  color: rgb(199, 122, 207);
+}
+
+input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+  padding-left: 0.5rem;
+}
+
+.contacts {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  gap: 3rem;
+}
+
+.wrapped_contact_letter {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 15rem;
+  width: 19rem;
+  border: 1px rgb(60, 0, 255) solid;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 0.5rem 1rem 0.5rem 1rem;
+}
+
+.number {
+  color: rgb(255, 101, 173);
+  font-size: 22px;
+}
+
+.letter {
+  color: rgb(255, 101, 173);
+  font-size: 22px;
+}
+
+.error {
+  color: red;
+  background-color: black;
+  border: 3px rgb(255, 102, 0) solid;
+  text-align: center;
+  visibility: hidden;
+  margin: 0 50rem 2rem 50rem;
+}
+
+.is-invalid {
+  background-color: rgb(210, 135, 30);
+  border-color: red;
+  color:#ff0000
+}
+
+.is-invalid::placeholder{
+  color:#ff0000
+}
+
+.all_contact_letter_info {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  width: 21rem;
+}
+
+.contact_letter_info {
+  display: flex;
+  gap: 4rem;
+  align-items: center;
+  background-color: white;
+  border: 1px rgb(255, 0, 0) solid;
+  width: 21rem;
+}
+
+
+
+.cross_delete {
+  position: relative;
+  width: 2rem;
+  height: 2rem;
+  background-color: black; /* фон для наглядности */
+}
+
+.cross_delete::before,
+.cross_delete::after {
+  content: "";
+  position: absolute;
+  background-color: white;
+}
+
+.cross_delete::before {
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  transform: rotate(-45deg);
+}
+
+.cross_delete::after {
+  left: 50%;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  transform: rotate(-45deg);
+}
+
+.cross_delete:hover {
+  background: #ff0000;
+}
+
+.button_close {
+  float: right;
+  position: relative;
+  width: 2rem;
+  height: 2rem;
+  background-color: black; /* фон для наглядности */
+}
+
+.button_close::before,
+.button_close::after {
+  content: "";
+  position: absolute;
+  background-color: white;
+}
+
+.button_close::before {
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  transform: rotate(-45deg);
+}
+
+.button_close::after {
+  left: 50%;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  transform: rotate(-45deg);
+}
+
+.button_close:hover {
+  background: #ff0000;
+}
+
+.search_dialog {
+  width: 45rem;
+  height: 30rem;
+  background-color: blanchedalmond;
+  border-radius: 30px;
+  border: 3px, rgb(101, 255, 142), solid;
+}
+
+.dialog_wo_cross {
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.search_contact {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.search_input {
+  background-color: white;
+  color: rgb(0, 0, 0);
+  border: 1px black solid;
+  width: 20rem;
+}
+
+.search_input::placeholder {
+  color: rgba(0, 0, 0, 0.3);
+  padding-left: 0.5rem;
+}
+
+.info_block {
+  width: 40rem;
+  height: 15rem;
+  border: 1px orange solid;
+  background-color: white;
+  overflow-y: auto;
+}
+
+.show_all {
+  border: 2px, rgb(101, 101, 255), solid;
+  background-color: rgb(204, 217, 245);
+  color: #ff0000;
+  font-weight: bold;
+}
+
+.search_all_contacts {
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.5rem;
+}
+
+.search_person_block {
+  height: 4rem;
+  background-color: rgba(0, 0, 0, 0.237);
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  padding: 0 0.5rem 0 0.5rem;
+  align-items: center;
+  border: 1px black solid;
+}
+
+.search_one_person_block > div {
+  font-size: 14px;
+}
+
+.cross_and_note {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.image_note {
+  width: 20px;
+  height: 20px;
+}
+
+.search_person_block_cross {
+  position: relative;
+  width: 1rem;
+  height: 1rem;
+  background-color: black; /* фон для наглядности */
+}
+
+.search_person_block_cross::before,
+.search_person_block_cross::after {
+  content: "";
+  position: absolute;
+  background-color: white;
+}
+
+.search_person_block_cross::before {
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  transform: rotate(-45deg);
+}
+
+.search_person_block_cross::after {
+  left: 50%;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  transform: rotate(-45deg);
+}
+
+.search_person_block_cross:hover {
+  background: #ff0000;
+}
+
+.image_note:hover {
+  filter: invert(14%) sepia(77%) saturate(7436%) hue-rotate(11deg)
+    brightness(103%) contrast(127%);
+}
+
+#edit {
+  width: 270px;
+  height: 270px;
+  background-color: white;
+  border: 2px rgb(195, 154, 237) solid;
+  border-radius: 10px;
+}
+
+.edit_h1 {
+  color: rgb(60, 0, 255);
+  font-size: 20px;
+}
+
+.edit_input {
+  background-color: beige;
+  border: 0.5px rgb(0, 208, 255) solid;
+  width: 17rem;
+  margin-bottom: 0.5rem;
+  color: black
+}
+
+.edit_button_close {
+  float: right;
+  display: inline;
+  position: relative;
+  width: 1rem;
+  height: 1rem;
+  background-color: black; /* фон для наглядности */
+}
+
+.edit_button_close::before,
+.edit_button_close::after {
+  content: "";
+  position: absolute;
+  background-color: white;
+}
+
+.edit_button_close::before {
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  transform: rotate(-45deg);
+}
+
+.edit_button_close::after {
+  left: 50%;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  transform: rotate(-45deg);
+}
+
+.edit_button_close:hover {
+  background: #ff0000;
+}
+
+.hidden {
+  display: none;
+}
+
+.flexim {
+  display: flex;
+}
