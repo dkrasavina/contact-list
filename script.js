@@ -475,6 +475,7 @@ showBtn.addEventListener("click", () => {
 
               contactList[firstLetterEdit].push(personInfoEdit);
               console.log("добавили :", contactList);
+              localStorage.setItem("contactList", JSON.stringify(contactList));
 
               ADDING.addingNumber(firstLetterEdit, personInfoEdit);
 
