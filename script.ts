@@ -1,5 +1,5 @@
 class FormValidation {
-  selectors = {
+  selectors: { form: string; fieldError: string } = {
     form: "[data-js-form]",
     fieldError: "[data-js-form-error]",
   };
@@ -14,20 +14,26 @@ class FormValidation {
     this.bindEvents();
   }
 
-  manageError(errorMessages) {
+  manageError(errorMessages: string[]) {
     if (errorMessages.length > 0) {
-      const errorElement = document.querySelector(this.selectors.fieldError);
+      const errorElement = document.querySelector<HTMLDivElement>(this.selectors.fieldError);
+
+      if (errorElement === null) {
+        return;
+      }
+
       errorElement.style.visibility = "visible";
       setTimeout(() => (errorElement.style.visibility = "hidden"), 4000);
     }
   }
 
-  validateField(fieldControlElement) {
+  validateField(fieldControlElement: HTMLInputElement) {
+    console.log(fieldControlElement);
     const errors = fieldControlElement.validity;
-    const errorMessages = [];
+    const errorMessages: string[] = [];
 
     Object.entries(this.errorMessages).forEach(([errorType, errorMessage]) => {
-      if (errors[errorType]) {
+      if (errors[errorType as keyof typeof this.errorMessages]) {
         errorMessages.push(errorMessage);
       }
     });
@@ -36,29 +42,27 @@ class FormValidation {
       const isError = true;
 
       fieldControlElement.classList.toggle("is-invalid", isError);
-      setTimeout(
-        () => fieldControlElement.classList.remove("is-invalid"),
-        4000
-      );
+      setTimeout(() => fieldControlElement.classList.remove("is-invalid"), 4000);
       fieldControlElement.value = "";
     }
 
     fieldControlElement.placeholder = errorMessages.join(", ");
 
-    setTimeout(
-      () => (fieldControlElement.placeholder = fieldControlElement.name),
-      4000
-    );
+    setTimeout(() => (fieldControlElement.placeholder = fieldControlElement.name), 4000);
 
     this.manageError(errorMessages);
 
     const isValid = errorMessages.length === 0;
-    fieldControlElement.ariaInvalid = !isValid;
+    fieldControlElement.ariaInvalid = (!isValid).toString();
     return isValid;
   }
 
-  onBlur(event) {
-    const { target } = event;
+  onBlur(event: FocusEvent) {
+    const target = event.target as HTMLInputElement;
+    if (target === null) {
+      return;
+    }
+
     const isFormField = target.closest(this.selectors.form);
 
     if (isFormField) {
@@ -73,9 +77,15 @@ class FormValidation {
   }
 }
 
+type PersonInfo = {
+  Name: string;
+  Vacancy: string;
+  Phone: string;
+};
+
 const VALIDATOR = new FormValidation();
 
-const listOfContacts = {
+const listOfContacts: Record<string, PersonInfo[]> = {
   A: [],
   B: [],
   C: [],
@@ -104,9 +114,11 @@ const listOfContacts = {
   Z: [],
 };
 
-let contactList = JSON.parse(localStorage.getItem("contactList"));
-if (contactList === null) {
-  contactList = listOfContacts;
+const storedContacts = localStorage.getItem("contactList");
+
+let contactList = listOfContacts;
+if (storedContacts) {
+  contactList = JSON.parse(storedContacts);
 }
 
 class AddingInfo {
@@ -120,28 +132,29 @@ class AddingInfo {
   }
 
   getting() {
-    const formElement = document.querySelector(this.selectors.form);
+    const formElement = document.querySelector<HTMLFormElement>(this.selectors.form);
+    if (formElement === null) {
+      return;
+    }
 
-    const requiredControlElements = [...formElement.elements].filter(
-      (element) => element.required
-    );
+    const inputs = [...formElement.elements].filter((el) => el instanceof HTMLInputElement);
 
-    let isFormValid = requiredControlElements.every((element) =>
-      VALIDATOR.validateField(element)
-    );
+    const requiredControlElements = inputs.filter((element) => element.required);
+
+    let isFormValid = requiredControlElements.every((element) => VALIDATOR.validateField(element));
 
     if (isFormValid) {
       let formData = new FormData(formElement);
 
-      const personInfo = Object.fromEntries(formData);
-      console.log(personInfo);
+      const personInfo = Object.fromEntries(formData) as PersonInfo;
+      console.log("PERSONINFO", personInfo);
       let firstLetter = personInfo.Name[0].toUpperCase();
       contactList[firstLetter].push(personInfo);
       localStorage.setItem("contactList", JSON.stringify(contactList));
-      console.log(
-        "my local storage",
-        JSON.parse(localStorage.getItem("contactList"))
-      );
+      // console.log(
+      //   "my local storage",
+      //   JSON.parse(localStorage.getItem("contactList"))
+      // );
 
       this.addingNumber(firstLetter, personInfo);
     } else {
@@ -149,12 +162,16 @@ class AddingInfo {
     }
   }
 
-  addingNumber(firstLetter, personInfo) {
-    const letterWithNumberParent = document.querySelector(
-      `#wrapped_${firstLetter}`
-    );
+  addingNumber(firstLetter: string, personInfo: { Name: string; Vacancy: string; Phone: string }) {
+    const letterWithNumberParent = document.querySelector(`#wrapped_${firstLetter}`);
+    if (letterWithNumberParent === null) {
+      return;
+    }
 
     const letterWithNumber = letterWithNumberParent.querySelector("div");
+    if (letterWithNumber === null) {
+      return;
+    }
     letterWithNumber.classList.add("wrapped_contact_letter");
 
     const personBlockWithCross = document.createElement("div");
@@ -171,32 +188,30 @@ class AddingInfo {
     personBlock.classList.add("person-block");
 
     const personInfoComponent = Object.entries(personInfo);
-    const personInfoComponentList = personInfoComponent.map((item) =>
-      item.join(": ")
-    );
+    const personInfoComponentList = personInfoComponent.map((item) => item.join(": "));
     personInfoComponentList.forEach((item) => {
       let personInnerBlock = document.createElement("div");
       personInnerBlock.textContent = item;
       personBlock.append(personInnerBlock);
     });
 
-    const neededLetter = document.querySelector(`#${firstLetter}`);
+    const neededLetter = document.querySelector(`#${firstLetter}`)!;
 
     personBlockWithCross.append(personBlock);
     personBlockWithCross.append(cross);
 
-    if (
-      letterWithNumberParent.querySelector(".all_contact_letter_info") === null
-    ) {
+    if (letterWithNumberParent.querySelector(".all_contact_letter_info") === null) {
       const allContactLetterInfo = document.createElement("div");
       allContactLetterInfo.classList.add("all_contact_letter_info");
       allContactLetterInfo.classList.add("hidden");
       allContactLetterInfo.append(personBlockWithCross);
       letterWithNumber.after(allContactLetterInfo);
     } else {
-      const allContactLetterInfo = letterWithNumberParent.querySelector(
-        ".all_contact_letter_info"
-      );
+      const allContactLetterInfo = letterWithNumberParent.querySelector(".all_contact_letter_info");
+      if (allContactLetterInfo === null) {
+        return;
+      }
+
       allContactLetterInfo.append(personBlockWithCross);
     }
 
@@ -204,65 +219,80 @@ class AddingInfo {
 
     if (letterWithNumber.querySelector(".number") === null) {
       const numberContactsElement = document.createElement("div");
-      numberContactsElement.textContent = numberContacts;
+      numberContactsElement.textContent = numberContacts.toString();
       numberContactsElement.classList.add("number");
       neededLetter.after(numberContactsElement);
     } else {
       const numberContactsElement = letterWithNumber.querySelector(".number");
-      numberContactsElement.textContent = numberContacts;
+      if (numberContactsElement === null) {
+        return;
+      }
+      numberContactsElement.textContent = numberContacts.toString();
     }
 
     cross.addEventListener("click", (event) => {
-      const letterBlock = event.target.closest(".contact_letter");
-      const contactBlock = letterBlock.querySelector(".contact_letter_info");
-      const contactInfo = contactBlock.querySelector(".person-block");
-      const infoDivs = contactInfo.querySelectorAll("div");
+      if (event.target === null) {
+        return;
+      }
 
-      const person = {};
+      if (!(event.target instanceof HTMLDivElement)) {
+        return;
+      }
+      const letterBlock = event.target.closest(".contact_letter")!;
+      const contactBlock = letterBlock.querySelector(".contact_letter_info")!;
+      const contactInfo = contactBlock.querySelector(".person-block")!;
+      const infoDivs = contactInfo.querySelectorAll<HTMLDivElement>("div")!;
+
+      const person: Record<string, string> = {};
 
       infoDivs.forEach((div) => {
-        const [key, value] = div.textContent.split(":");
-        if (key && value) {
-          person[key.trim()] = value.trim();
+        if (div.textContent === null) {
+          return;
+        } else {
+          const [key, value] = div.textContent.split(":");
+          if (key && value) {
+            person[key.trim()] = value.trim();
+          }
         }
       });
 
       contactBlock.remove();
 
-      const contactInfoFirstLetter = letterBlock.querySelector(".letter");
-      const contactInfoNumber = letterBlock.querySelector(".number");
+      const contactInfoFirstLetter = letterBlock.querySelector(".letter")!;
+      const contactInfoNumber = letterBlock.querySelector(".number")!;
       let contactInfoNumberCurrent = Number(contactInfoNumber.textContent);
 
       const contactInfoNumberNew = contactInfoNumberCurrent - 1;
       if (contactInfoNumberNew == 0) {
         contactInfoNumber.textContent = "";
       } else {
-        contactInfoNumber.textContent = contactInfoNumberNew;
+        contactInfoNumber.textContent = contactInfoNumberNew.toString();
       }
 
-      const letter = contactInfoFirstLetter.textContent;
+      const letter = String(contactInfoFirstLetter.textContent);
 
-      const indexForRemoving = contactList[letter].findIndex(
-        (contact) => contact === person
-      );
+      const indexForRemoving = contactList[letter].findIndex((contact) => contact === person);
       contactList[letter].splice(indexForRemoving, 1);
       localStorage.setItem("contactList", JSON.stringify(contactList));
-      console.log(
-        "my local storage",
-        JSON.parse(localStorage.getItem("contactList"))
-      );
+      // console.log(
+      //   "my local storage",
+      //   JSON.parse(localStorage.getItem("contactList"))
+      // );
 
       event.stopPropagation();
     });
   }
 
-  onSubmit(event) {
+  onSubmit(event: MouseEvent) {
     event.preventDefault();
     this.getting();
   }
 
   events() {
-    const addButton = document.querySelector(".button_add");
+    const addButton = document.querySelector<HTMLButtonElement>(".button_add");
+    if (addButton === null) {
+      return;
+    }
     addButton.addEventListener("click", (event) => this.onSubmit(event));
   }
 }
@@ -283,14 +313,22 @@ bigLetters.forEach((letter) => {
 // ADDING.addingNumber("D", {Name: "derra", Vacancy:"djff", Phone: "+79999999999"})
 
 function visualizationInfo() {
-  const columnElement = document.querySelector(".contacts");
+  const columnElement = document.querySelector<HTMLDivElement>(".contacts");
 
+  if (columnElement === null) {
+    return;
+  }
   columnElement.addEventListener("click", (event) => {
+    if (event.target === null) {
+      return;
+    }
+
+    if (!(event.target instanceof HTMLElement)) {
+      return;
+    }
     const letter = event.target.closest(".contact_letter");
     if (letter) {
-      const personBlockWithCross = letter.querySelector(
-        ".all_contact_letter_info"
-      );
+      const personBlockWithCross = letter.querySelector(".all_contact_letter_info");
       if (personBlockWithCross) {
         personBlockWithCross.classList.toggle("hidden");
       }
@@ -301,32 +339,33 @@ function visualizationInfo() {
 visualizationInfo();
 
 function clearAll() {
-  const columnElement = document.querySelector(".button_clear");
+  const columnElement = document.querySelector<HTMLButtonElement>(".button_clear");
+  if (columnElement === null) {
+    return;
+  }
   columnElement.addEventListener("click", () => {
     const allNumbers = document.querySelectorAll(".number");
     const allLetters = document.querySelectorAll(".letter");
-    const allContactLetterInfo = document.querySelectorAll(
-      ".all_contact_letter_info"
-    );
+    const allContactLetterInfo = document.querySelectorAll(".all_contact_letter_info");
     allContactLetterInfo.forEach((element) => element.remove());
     allNumbers.forEach((element) => (element.textContent = ""));
-    allLetters.forEach((element) => (contactList[element.textContent] = []));
+    allLetters.forEach((element) => (contactList[String(element.textContent)] = []));
 
     console.log(contactList);
 
     localStorage.setItem("contactList", JSON.stringify(contactList));
-    console.log(
-      "my local storage",
-      JSON.parse(localStorage.getItem("contactList"))
-    );
+    // console.log(
+    //   "my local storage",
+    //   JSON.parse(localStorage.getItem("contactList"))
+    // );
   });
 }
 
 clearAll();
 
-const showBtn = document.querySelector("#show-dialog");
-const dialog = document.querySelector("#dialog");
-const jsCloseBtn = dialog.querySelector("#js-close");
+const showBtn = document.querySelector("#show-dialog")!;
+const dialog = document.querySelector<HTMLDialogElement>("#dialog")!;
+const jsCloseBtn = dialog.querySelector("#js-close")!;
 
 showBtn.addEventListener("click", () => {
   dialog.showModal();
@@ -360,42 +399,38 @@ showBtn.addEventListener("click", () => {
         cross.classList.add("search_person_block_cross");
 
         cross.addEventListener("click", (event) => {
-          const closeSearchPersonBlock = event.target.closest(
-            ".search_person_block"
-          );
-          const closeSearchOnePersonBlock =
-            closeSearchPersonBlock.querySelector(".search_one_person_block");
-          const infoDivs = closeSearchOnePersonBlock.querySelectorAll("div");
-          const person = {};
+          if (event.target === null) {
+            return;
+          }
+
+          if (!(event.target instanceof HTMLElement)) {
+            return;
+          }
+          const closeSearchPersonBlock = event.target.closest(".search_person_block")!;
+          const closeSearchOnePersonBlock = closeSearchPersonBlock.querySelector(".search_one_person_block")!;
+          const infoDivs = closeSearchOnePersonBlock.querySelectorAll("div")!;
+          const person: Record<string, string> = {};
 
           infoDivs.forEach((div) => {
-            const [key, value] = div.textContent.split(":");
+            const [key, value] = String(div.textContent).split(":");
             if (key && value) {
               person[key.trim()] = value.trim();
             }
           });
 
           const nameFirstLetter = person.Name[0].toUpperCase();
-          const indexForRemoving = contactList[nameFirstLetter].findIndex(
-            (contact) => contact === person
-          );
+          const indexForRemoving = contactList[nameFirstLetter].findIndex((contact) => contact === person);
           contactList[nameFirstLetter].splice(indexForRemoving, 1);
           localStorage.setItem("contactList", JSON.stringify(contactList));
-          console.log(
-            "my local storage",
-            JSON.parse(localStorage.getItem("contactList"))
-          );
+          // console.log(
+          //   "my local storage",
+          //   JSON.parse(localStorage.getItem("contactList"))
+          // );
 
-          const contactExectLetterElement = document.querySelector(
-            `#${nameFirstLetter}`
-          );
-          const contactLetterElement =
-            contactExectLetterElement.closest(".contact_letter");
-          const contactNumberElement =
-            contactLetterElement.querySelector(".number");
-          const closeContactLetterInfo = contactLetterElement.querySelector(
-            ".contact_letter_info"
-          );
+          const contactExectLetterElement = document.querySelector(`#${nameFirstLetter}`)!;
+          const contactLetterElement = contactExectLetterElement.closest(".contact_letter")!;
+          const contactNumberElement = contactLetterElement.querySelector(".number")!;
+          const closeContactLetterInfo = contactLetterElement.querySelector(".contact_letter_info")!;
 
           closeSearchPersonBlock.remove();
           closeContactLetterInfo.remove();
@@ -405,7 +440,7 @@ showBtn.addEventListener("click", () => {
           if (contactExectNumberNew == 0) {
             contactNumberElement.textContent = "";
           } else {
-            contactNumberElement.textContent = contactExectNumberNew;
+            contactNumberElement.textContent = contactExectNumberNew.toString();
           }
 
           event.stopPropagation();
@@ -416,60 +451,63 @@ showBtn.addEventListener("click", () => {
         img.classList.add("image_note");
         img.id = "show-edit";
 
-        const editWindow = document.querySelector("#edit");
+        const editWindow = document.querySelector<HTMLDialogElement>("#edit")!;
 
-        const editFuction = function (event) {
-          const editSearchPersonBlock = event.target.closest(
-            ".search_person_block"
-          );
-          const editSearchOnePersonBlock = editSearchPersonBlock.querySelector(
-            ".search_one_person_block"
-          );
+        const editFuction = function (event: MouseEvent) {
+          if (event.target === null) {
+            return;
+          }
+
+          if (!(event.target instanceof HTMLElement)) {
+            return;
+          }
+          const editSearchPersonBlock = event.target.closest(".search_person_block")!;
+          const editSearchOnePersonBlock = editSearchPersonBlock.querySelector(".search_one_person_block")!;
 
           editWindow.showModal();
 
           const editInfoDivs = editSearchOnePersonBlock.querySelectorAll("div");
-          const editPerson = {};
+          const editPerson: Record<string, string> = {};
 
           editInfoDivs.forEach((div) => {
-            const [key, value] = div.textContent.split(":");
+            const [key, value] = String(div.textContent).split(":");
             if (key && value) {
               editPerson[key.trim()] = value.trim();
             }
           });
 
-          const editNameElement = editWindow.querySelector("#edit_name");
+          const editNameElement = editWindow.querySelector<HTMLInputElement>("#edit_name")!;
           editNameElement.value = editPerson.Name;
           const firstLetterOld = editPerson.Name[0].toUpperCase();
-          const editVacancyElement = editWindow.querySelector("#edit_vacancy");
+          const editVacancyElement = editWindow.querySelector<HTMLInputElement>("#edit_vacancy")!;
           editVacancyElement.value = editPerson.Vacancy;
-          const editPhoneElement = editWindow.querySelector("#edit_phone");
+          const editPhoneElement = editWindow.querySelector<HTMLInputElement>("#edit_phone")!;
           editPhoneElement.value = editPerson.Phone;
 
-          btnEdit = editWindow.querySelector(".edit_button");
+          const btnEdit = editWindow.querySelector<HTMLButtonElement>(".edit_button")!;
 
-          const editButtonFunction = function (event) {
+          const editButtonFunction = function (event: MouseEvent) {
             event.stopPropagation();
-            const inputsElements = editWindow.querySelector("#edit_form");
-            const requiredEditElements = [...inputsElements.elements].filter(
-              (element) => element.required
+            const inputsElements = editWindow.querySelector<HTMLFormElement>("#edit_form")!;
+            const requiredEditElementsInput = [...inputsElements.elements].filter(
+              (element) => element instanceof HTMLInputElement
             );
-            let isFormValid = requiredEditElements.every((element) =>
-              VALIDATOR.validateField(element)
-            );
+
+            const requiredEditElements = requiredEditElementsInput.filter((element) => element.required);
+            let isFormValid = requiredEditElements.every((element) => VALIDATOR.validateField(element));
 
             if (isFormValid) {
               console.log("изначально :", contactList);
 
               let formDataEdit = new FormData(inputsElements);
 
-              const personInfoEdit = Object.fromEntries(formDataEdit);
+              const personInfoEdit = Object.fromEntries(formDataEdit) as PersonInfo;
 
               let firstLetterEdit = personInfoEdit.Name[0].toUpperCase();
 
-              const indexForRemovingEdit = contactList[
-                firstLetterOld
-              ].findIndex((contact) => contact === personInfoEdit);
+              const indexForRemovingEdit = contactList[firstLetterOld].findIndex(
+                (contact) => contact === personInfoEdit
+              );
               contactList[firstLetterOld].splice(indexForRemovingEdit, 1);
               console.log("убрали :", contactList);
 
@@ -479,16 +517,10 @@ showBtn.addEventListener("click", () => {
 
               ADDING.addingNumber(firstLetterEdit, personInfoEdit);
 
-              const contactExectLetterElement = document.querySelector(
-                `#${firstLetterOld}`
-              );
-              const contactLetterElement =
-                contactExectLetterElement.closest(".contact_letter");
-              const contactNumberElement =
-                contactLetterElement.querySelector(".number");
-              const closeContactLetterInfo = contactLetterElement.querySelector(
-                ".contact_letter_info"
-              );
+              const contactExectLetterElement = document.querySelector(`#${firstLetterOld}`)!;
+              const contactLetterElement = contactExectLetterElement.closest(".contact_letter")!;
+              const contactNumberElement = contactLetterElement.querySelector(".number")!;
+              const closeContactLetterInfo = contactLetterElement.querySelector(".contact_letter_info")!;
 
               closeContactLetterInfo.remove();
               let contactExectNumber = Number(contactNumberElement.textContent);
@@ -496,11 +528,14 @@ showBtn.addEventListener("click", () => {
               if (contactExectNumberNew == 0) {
                 contactNumberElement.textContent = "";
               } else {
-                contactNumberElement.textContent = contactExectNumberNew;
+                contactNumberElement.textContent = contactExectNumberNew.toString();
               }
 
               editInfoDivs.forEach((el) => {
-                const key = el.textContent.split(":")[0].trim();
+                const key = String(el.textContent).split(":")[0].trim();
+                if (key !== "Name" && key !== "Vacancy" && key !== "Phone") {
+                  return;
+                }
                 if (personInfoEdit[key]) {
                   el.textContent = `${key}: ${personInfoEdit[key]}`;
                 }
@@ -514,7 +549,7 @@ showBtn.addEventListener("click", () => {
           };
           btnEdit.addEventListener("click", editButtonFunction);
 
-          const editCloseBtn = editWindow.querySelector("#edit-close");
+          const editCloseBtn = editWindow.querySelector("#edit-close")!;
           editCloseBtn.addEventListener("click", (e) => {
             e.preventDefault();
             editWindow.close();
@@ -533,31 +568,30 @@ showBtn.addEventListener("click", () => {
     }
   });
 
-  const searchInfoBlock = dialog.querySelector(".info_block");
+  const searchInfoBlock = dialog.querySelector(".info_block")!;
   searchInfoBlock.append(allContactInfo);
 
   function searching() {
-    var all, input, filter, ul, li, i, txtValue;
-    all = dialog.querySelector(".search_all_contacts");
-    input = dialog.querySelector(".search_input");
-    filter = input.value;
-    ul = allContactInfo;
-    li = ul.querySelectorAll(".search_person_block");
+    const all = dialog.querySelector(".search_all_contacts")!;
+    const input = dialog.querySelector<HTMLInputElement>(".search_input")!;
+    const filter = input.value;
+    const ul = allContactInfo;
+    const li = ul.querySelectorAll<HTMLElement>(".search_person_block");
 
     all.classList.add("flexim");
-    for (i = 0; i < li.length; i++) {
-      let block = li[i].querySelector(".search_one_person_block");
+    for (let i = 0; i < li.length; i++) {
+      let block = li[i].querySelector(".search_one_person_block")!;
       let blockDivs = block.querySelectorAll("div");
-      const personSearching = {};
+      const personSearching: Record<string, string> = {};
 
       blockDivs.forEach((div) => {
-        const [key, value] = div.textContent.split(":");
+        const [key, value] = String(div.textContent).split(":");
         if (key && value) {
           personSearching[key.trim()] = value.trim();
         }
       });
 
-      txtValue = personSearching.Name;
+      const txtValue = personSearching.Name;
       if (txtValue.indexOf(filter) > -1) {
         li[i].style.display = "flex";
       } else {
@@ -566,11 +600,11 @@ showBtn.addEventListener("click", () => {
     }
   }
 
-  const searchingInputString = document.querySelector(".search_input");
+  const searchingInputString = document.querySelector(".search_input")!;
 
   searchingInputString.addEventListener("input", searching);
 
-  const showAll = dialog.querySelector(".show_all");
+  const showAll = dialog.querySelector(".show_all")!;
   const searchPersonBlock = dialog.querySelector(".search_person_block");
   showAll.addEventListener("click", () => {
     allContactInfo.classList.toggle("hidden");
@@ -580,6 +614,6 @@ showBtn.addEventListener("click", () => {
 jsCloseBtn.addEventListener("click", (e) => {
   e.preventDefault();
   dialog.close();
-  const list = dialog.querySelector(".search_all_contacts");
+  const list = dialog.querySelector(".search_all_contacts")!;
   list.remove();
 });
